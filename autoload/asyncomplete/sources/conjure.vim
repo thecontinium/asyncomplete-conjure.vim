@@ -1,8 +1,7 @@
 let s:initialized = 0
 function! asyncomplete#sources#conjure#completor(opt, ctx)
-    if !s:initialized
-        call necosyntax#initialize()
-        let s:initialized = 1
+    if !conjure#should_autocomplete()
+        return []
     endif
 
     let l:col = a:ctx['col']
@@ -11,7 +10,7 @@ function! asyncomplete#sources#conjure#completor(opt, ctx)
     let l:kw = matchstr(l:typed, '\w\+$')
     let l:kwlen = len(l:kw)
 
-    let l:matches = map(necosyntax#gather_candidates(),'{"word":v:val,"dup":1,"icase":1,"menu": "[Syntax]"}')
+    let l:matches = conjure#completions(l:typed) 
     let l:startcol = l:col - l:kwlen
 
     call asyncomplete#complete(a:opt['name'], a:ctx, l:startcol, l:matches)

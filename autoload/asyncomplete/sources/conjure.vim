@@ -1,4 +1,3 @@
-let s:initialized = 0
 function! asyncomplete#sources#conjure#completor(opt, ctx)
     if !conjure#should_autocomplete()
         return

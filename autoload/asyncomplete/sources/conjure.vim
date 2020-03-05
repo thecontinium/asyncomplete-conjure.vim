@@ -10,7 +10,7 @@ function! asyncomplete#sources#conjure#completor(opt, ctx)
     let l:kw = matchstr(l:typed, '\w\+$')
     let l:kwlen = len(l:kw)
 
-    let l:matches = conjure#completions(l:typed) 
+    let l:matches = conjure#completions(l:kw) 
     let l:startcol = l:col - l:kwlen
 
     call asyncomplete#complete(a:opt['name'], a:ctx, l:startcol, l:matches)

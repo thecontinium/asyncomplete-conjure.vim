@@ -5,7 +5,7 @@ endfunction
 function! asyncomplete#sources#conjure#completor(opt, ctx)
    let l:col = a:ctx['col']
    let l:typed = a:ctx['typed']
-   let l:kw = matchstr(l:typed, '\k\+')
+   let l:kw = matchstr(l:typed, '[0-9a-zA-Z.!$%&*+/:<=>?#_~\^\-\\]\+')
    let l:kwlen = len(l:kw)
 
    let l:context = {

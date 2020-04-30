@@ -1,23 +1,31 @@
+function s:luafn(mod, f, arg)
+   return luaeval('require("' . a:mod . '")["' . a:f . '"](...)', a:arg)
+endfunction
+
 function! asyncomplete#sources#conjure#completor(opt, ctx)
    let l:col = a:ctx['col']
    let l:typed = a:ctx['typed']
    let l:kw = matchstr(l:typed, '\k\+')
    let l:kwlen = len(l:kw)
-   let l:startcol = l:col - l:kwlen
 
-   let l:matches = luaeval("require('conjure.eval')['completions-sync'](...)", l:kw)
+   let l:context = {
+            \ 'name': a:opt['name'],
+            \ 'ctx': a:ctx,
+            \ 'startcol': l:col - l:kwlen,
+            \ 'prom': s:luafn('conjure.eval', 'completions-promise', l:kw)
+            \}
 
-   call asyncomplete#complete(a:opt['name'], a:ctx, l:startcol, l:matches)
+   function! context.callback(timer)
+      if s:luafn('conjure.promise', 'done?', self.prom)
+         call timer_stop(a:timer)
+         call asyncomplete#complete(self.name, self.ctx, self.startcol,
+                  \ s:luafn('conjure.promise', 'close', self.prom))
+      endif
+   endfunction
+
+   call timer_start(20, context.callback, {'repeat': -1})
 endfunction
 
 function! asyncomplete#sources#conjure#get_source_options(opts)
    return a:opts
 endfunction
-
-function s:gather_candidates(typed)
-   let p = luaeval("require('conjure.eval')['completions-promise'](...)", a:typed)
-   let w = luaeval("require('conjure.promise')['await'](...)", p)
-   let m = luaeval("require('conjure.promise')['close'](...)", p)
-   return m
-endfunction
-

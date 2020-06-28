@@ -11,7 +11,7 @@ Provide syntax autocompletion source for [asyncomplete.vim](https://github.com/p
 ```vim
 au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#conjure#get_source_options({
     \ 'name': 'conjure',
-    \ 'whitelist': ['clojure'],
+    \ 'allowlist': ['clojure'],
     \ 'completor': function('asyncomplete#sources#conjure#completor'),
     \ }))
 ```

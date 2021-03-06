@@ -7,7 +7,8 @@ function! asyncomplete#sources#conjure#completor(opt, ctx)
    let l:typed = a:ctx['typed']
    let l:kw = matchstr(l:typed, '\v[[:alnum:]!$%&*+/:<=>?@\^_~\-\.#]+$')
    let l:kwlen = len(l:kw)
-
+   let l:time = get(a:ctx,'time',20)
+    
    let l:context = {
             \ 'name': a:opt['name'],
             \ 'ctx': a:ctx,
@@ -23,7 +24,7 @@ function! asyncomplete#sources#conjure#completor(opt, ctx)
       endif
    endfunction
 
-   call timer_start(20, context.callback, {'repeat': -1})
+   call timer_start(l:time, context.callback, {'repeat': -1})
 endfunction
 
 function! asyncomplete#sources#conjure#get_source_options(opts)
